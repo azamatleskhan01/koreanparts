@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Auto Parts Catalog</h1>
+    <hr>
+
+    {% if auto_parts %}
+        <ul>
+            {% for part in auto_parts %}
+            <li class="auto-part">
+                {% if part.image %}
+                    <img src="{{ part.image.url }}" alt="{{ part.name }}">
+                {% else %}
+                    <p>No image available</p>
+                {% endif %}
+
+                <p><strong>Name:</strong> {{ part.name }}</p>
+                <p><strong>Part Number:</strong> {{ part.part_number }}</p>
+                <p><strong>Category:</strong> {{ part.category.name }}</p>
+                <p><strong>Manufacturer:</strong> {{ part.manufacturer.name }}</p>
+                <p class="price"><strong>Price:</strong> ${{ part.price }}</p>
+                <p><strong>Stock:</strong> {{ part.stock }} available</p>
+
+                {% if part.description %}
+                    <p><strong>Description:</strong> {{ part.description }}</p>
+                {% else %}
+                    <p><em>No description available.</em></p>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No auto parts available.</p>
+    {% endif %}
+{% endblock %}

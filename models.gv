@@ -1,0 +1,179 @@
+// Django Models
+digraph {
+	LogEntry [label="{
+id: AutoField
+action_time: DateTimeField
+user: ForeignKey
+content_type: ForeignKey
+object_id: TextField
+object_repr: CharField
+action_flag: PositiveSmallIntegerField
+change_message: TextField}"]
+	LogEntry -> CustomUser [label=user]
+	LogEntry -> ContentType [label=content_type]
+	Permission [label="{
+group: ManyToManyRel
+user: ManyToManyRel
+id: AutoField
+name: CharField
+content_type: ForeignKey
+codename: CharField}"]
+	Permission -> Group [label=group]
+	Permission -> CustomUser [label=user]
+	Permission -> ContentType [label=content_type]
+	Group [label="{
+user: ManyToManyRel
+id: AutoField
+name: CharField
+permissions: ManyToManyField}"]
+	Group -> CustomUser [label=user]
+	Group -> Permission [label=permissions]
+	ContentType [label="{
+logentry: ManyToOneRel
+permission: ManyToOneRel
+id: AutoField
+app_label: CharField
+model: CharField}"]
+	ContentType -> LogEntry [label=logentry]
+	ContentType -> Permission [label=permission]
+	Session [label="{
+session_key: CharField
+session_data: TextField
+expire_date: DateTimeField}"]
+	Manufacturer [label="{
+auto_parts: ManyToOneRel
+id: BigAutoField
+brand: CharField
+year_established: PositiveIntegerField}"]
+	Manufacturer -> AutoPart [label=auto_parts]
+	Category [label="{
+auto_parts: ManyToOneRel
+id: BigAutoField
+name: CharField}"]
+	Category -> AutoPart [label=auto_parts]
+	AutoPart [label="{
+cart_items: ManyToOneRel
+reviews: ManyToOneRel
+id: BigAutoField
+name: CharField
+part_number: CharField
+category: ForeignKey
+manufacturer: ForeignKey
+price: DecimalField
+stock: PositiveIntegerField
+description: TextField
+image: ImageField}"]
+	AutoPart -> CartItem [label=cart_items]
+	AutoPart -> Review [label=reviews]
+	AutoPart -> Category [label=category]
+	AutoPart -> Manufacturer [label=manufacturer]
+	Cart [label="{
+items: ManyToOneRel
+id: BigAutoField
+user: ForeignKey
+created_at: DateTimeField
+updated_at: DateTimeField}"]
+	Cart -> CartItem [label=items]
+	Cart -> CustomUser [label=user]
+	CartItem [label="{
+id: BigAutoField
+cart: ForeignKey
+auto_part: ForeignKey
+quantity: PositiveIntegerField}"]
+	CartItem -> Cart [label=cart]
+	CartItem -> AutoPart [label=auto_part]
+	Review [label="{
+id: BigAutoField
+user: ForeignKey
+auto_part: ForeignKey
+rating: PositiveSmallIntegerField
+comment: TextField
+image: ImageField
+created_at: DateTimeField}"]
+	Review -> CustomUser [label=user]
+	Review -> AutoPart [label=auto_part]
+	CustomUser [label="{
+logentry: ManyToOneRel
+carts: ManyToOneRel
+reviews: ManyToOneRel
+id: BigAutoField
+password: CharField
+last_login: DateTimeField
+is_superuser: BooleanField
+username: CharField
+first_name: CharField
+last_name: CharField
+email: EmailField
+is_staff: BooleanField
+is_active: BooleanField
+date_joined: DateTimeField
+phone: CharField
+groups: ManyToManyField
+user_permissions: ManyToManyField}"]
+	CustomUser -> LogEntry [label=logentry]
+	CustomUser -> Cart [label=carts]
+	CustomUser -> Review [label=reviews]
+	CustomUser -> Group [label=groups]
+	CustomUser -> Permission [label=user_permissions]
+	Request [label="{
+response: OneToOneRel
+queries: ManyToOneRel
+profile: ManyToOneRel
+id: CharField
+path: CharField
+query_params: TextField
+raw_body: TextField
+body: TextField
+method: CharField
+start_time: DateTimeField
+view_name: CharField
+end_time: DateTimeField
+time_taken: FloatField
+encoded_headers: TextField
+meta_time: FloatField
+meta_num_queries: IntegerField
+meta_time_spent_queries: FloatField
+pyprofile: TextField
+prof_file: FileField
+num_sql_queries: IntegerField}"]
+	Request -> Response [label=response]
+	Request -> SQLQuery [label=queries]
+	Request -> Profile [label=profile]
+	Response [label="{
+id: CharField
+request: OneToOneField
+status_code: IntegerField
+raw_body: TextField
+body: TextField
+encoded_headers: TextField}"]
+	Response -> Request [label=request]
+	SQLQuery [label="{
+profiles: ManyToManyRel
+id: AutoField
+query: TextField
+start_time: DateTimeField
+end_time: DateTimeField
+time_taken: FloatField
+identifier: IntegerField
+request: ForeignKey
+traceback: TextField
+analysis: TextField}"]
+	SQLQuery -> Profile [label=profiles]
+	SQLQuery -> Request [label=request]
+	Profile [label="{
+id: AutoField
+name: CharField
+start_time: DateTimeField
+end_time: DateTimeField
+request: ForeignKey
+time_taken: FloatField
+file_path: CharField
+line_num: IntegerField
+end_line_num: IntegerField
+func_name: CharField
+exception_raised: BooleanField
+dynamic: BooleanField
+queries: ManyToManyField}"]
+	Profile -> Request [label=request]
+	Profile -> SQLQuery [label=queries]
+}

@@ -1,0 +1,15 @@
+{% for part in parts %}
+  <div class="part">
+    <h2>{{ part.name }}</h2>
+    <p>{{ part.description }}</p>
+    <button onclick="fetchReviews({{ part.id }})">Show Reviews</button>
+  </div>
+{% endfor %}
+
+<script>
+function fetchReviews(partId) {
+  fetch(`/api/parts/${partId}/reviews/`)
+    .then(res => res.json())
+    .then(data => console.log(data));
+}
+</script>

@@ -1,0 +1,90 @@
+
+{% load static %}
+{% block title %}{{ part.name }} — Детали запчасти{% endblock %}
+
+{% block brand %}
+    <img src="{% static 'page.png' %}" alt="Logo" width="100" height="auto">
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="part-details">
+            <div class="row">
+                <div class="col-md-6">
+                    <!-- Проверка наличия изображения и его вывод -->
+                    {% if part.image %}
+                        <img src="{{ part.image.url }}" alt="{{ part.name }}" class="img-fluid">
+                    {% else %}
+                        <p>Изображение не доступно.</p>
+                    {% endif %}
+                </div>
+
+                <div class="col-md-6">
+                    <h2>{{ part.name }}</h2>
+                    <p><strong>Артикул:</strong> {{ part.part_number }}</p>
+                    <p><strong>Цена:</strong> {{ part.price }} руб.</p>
+                    <p><strong>Наличие:</strong>
+                        {% if part.stock > 0 %}
+                            В наличии
+                        {% else %}
+                            Нет в наличии
+                        {% endif %}
+                    </p>
+                    <p><strong>Производитель:</strong> {{ part.manufacturer.brand }}</p>
+                    <p><strong>Категория:</strong> {{ part.category.name }}</p>
+                    <p><strong>Описание:</strong> {{ part.description|default:"Описание отсутствует" }}</p>
+
+                    <!-- Форма добавления в корзину -->
+
+                </div>
+            </div>
+        </div>
+
+        <section class="reviews mt-5">
+            <h3>Отзывы</h3>
+            {% if reviews %}
+                <ul>
+                    {% for review in reviews %}
+                        <li class="review">
+                            <p><strong>{{ review.user.username }} — {{ review.rating }}★</strong></p>
+                            <p>{{ review.comment|default:"Без комментариев" }}</p>
+                            {% if review.image %}
+                                <img src="{{ review.image.url }}" alt="Фото отзыва" class="img-thumbnail">
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Отзывов пока нет.</p>
+            {% endif %}
+
+            {% if user.is_authenticated %}
+                <h4>Оставьте отзыв:</h4>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="rating">Оценка:</label>
+                        <select name="rating" id="rating" class="form-control" required>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment">Комментарий:</label>
+                        <textarea name="comment" id="comment" class="form-control" placeholder="Оставьте ваш комментарий" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="review_image">Фото (опционально):</label>
+                        <input type="file" name="image" id="review_image" class="form-control-file" accept="image/*">
+                    </div>
+                    <button type="submit" class="btn btn-success mt-2">Отправить отзыв</button>
+                </form>
+            {% else %}
+                <p>Чтобы оставить отзыв, <a href="{% url 'login' %}">войдите в аккаунт</a>.</p>
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}

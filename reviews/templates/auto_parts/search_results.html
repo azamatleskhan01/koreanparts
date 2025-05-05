@@ -1,0 +1,99 @@
+<!-- Форма поиска -->
+<div class="container mt-5">
+    <form method="get" action="{% url 'search_view' %}" class="p-4 bg-dark text-white rounded shadow-lg">
+        <h4 class="text-center mb-4" style="font-family: 'Roboto', sans-serif;">Поиск запчастей</h4>
+
+        <div class="form-group mb-3">
+            <label for="search" class="form-label">Поиск:</label>
+            <div class="input-group">
+                <span class="input-group-text bg-black text-white"><i class="fas fa-search"></i></span>
+                <input type="text" id="search" name="search" value="{{ request.GET.search }}" class="form-control bg-black text-white border-secondary" placeholder="Введите название запчасти">
+            </div>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="category" class="form-label">Категория:</label>
+            <select name="category" id="category" class="form-select bg-black text-white border-secondary">
+                <option value="" {% if not request.GET.category %}selected{% endif %}>Все категории</option>
+                {% for category in form.category.queryset %}
+                    <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:'s' %}selected{% endif %}>
+                        {{ category.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="min_price" class="form-label">Минимальная цена:</label>
+            <input type="number" id="min_price" name="min_price" value="{{ request.GET.min_price }}" class="form-control bg-black text-white border-secondary" step="0.01" placeholder="Минимальная цена">
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="max_price" class="form-label">Максимальная цена:</label>
+            <input type="number" id="max_price" name="max_price" value="{{ request.GET.max_price }}" class="form-control bg-black text-white border-secondary" step="0.01" placeholder="Максимальная цена">
+        </div>
+
+        <button type="submit" class="btn search-btn w-100 py-2 fs-5">
+            <i class="fas fa-search me-2"></i> Поиск
+        </button>
+    </form>
+
+    <hr class="my-5 border-secondary">
+
+    <h2 class="text-center text-light mb-4" style="font-family: 'Roboto', sans-serif;">Результаты поиска:</h2>
+    <ul class="list-group list-group-flush">
+        {% for part in results %}
+            <li class="list-group-item d-flex justify-content-between align-items-center py-3 px-4 bg-black text-white border-secondary rounded mb-3 shadow-sm hover-shadow">
+                <div>
+                    <h5 class="mb-1">{{ part.name }}</h5>
+                    <p class="mb-0 text-secondary">{{ part.category.name }}</p>
+                </div>
+                <span class="badge bg-warning text-dark rounded-pill fs-6">{{ part.price }}₽</span>
+            </li>
+        {% empty %}
+            <li class="list-group-item text-center text-danger fs-4 bg-black border-secondary">Запчасти не найдены</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<!-- Добавление CSS -->
+<style>
+    /* Хедер теперь серый */
+    .navbar {
+        background-color: #fff !important;
+    }
+
+    .hover-shadow:hover {
+        box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+        transform: translateY(-5px);
+    }
+
+    .search-btn {
+        background-color: #000;
+        color: #fff;
+        border: 1px solid #444;
+        border-radius: 30px;
+        transition: all 0.3s ease;
+    }
+
+    .search-btn:hover {
+        background-color: #fff;
+        border-color: #6f42c1;
+        box-shadow: 0 0 10px rgba(111, 66, 193, 0.5);
+        transform: translateY(-2px);
+    }
+
+    .input-group-text {
+        background-color: #fff;
+        color: white;
+        border: 1px solid #444;
+    }
+
+    .bg-dark {
+        background-color: #444 !important;
+    }
+
+    .border-secondary {
+        border-color: #444 !important;
+    }
+</style>

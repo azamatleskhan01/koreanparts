@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Магазин Корейских Авто-Запчастей</title>
+
+    <!-- Bootstrap CSS из CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- FontAwesome -->
+
+    <!-- Подключаем кастомные стили -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body style="display: flex; flex-direction: column; min-height: 100vh;"> <!-- Устанавливаем flexbox для растягивания страницы -->
+    <!-- Навигация -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">Genuineparts</a>
+            <a class="navbar-brand" href="/">{% block brand %}
+                <img src="{% static 'page.png' %}" alt="Logo" width="100" height="auto">
+            {% endblock %}</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'catalog' %}">Каталог</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'cart' %}">Корзина</a></li>
+
+                    <!-- Добавляем форму поиска в навигацию -->
+                    <li class="nav-item">
+                        <form class="d-flex" action="{% url 'search_view' %}" method="get">
+                            <input class="form-control me-2" type="search" placeholder="Поиск запчастей" aria-label="Поиск" name="query" value="{{ query }}">
+                            <button class="btn btn-outline-light" type="submit">
+                                <i class="fas fa-search"></i> <!-- Иконка поиска -->
+                            </button>
+                        </form>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Контент -->
+    <div class="container mt-5 flex-grow-1">
+        <h1 class="text-center">Каталог запчастей</h1>
+
+        <!-- Фильтр -->
+        <div class="d-flex justify-content-center mb-4">
+            <form method="GET" action="{% url 'catalog' %}" class="d-flex">
+                <select class="form-select w-auto me-2" name="brand">
+                    <option selected>Марка</option>
+                    <option value="hyundai">Hyundai</option>
+                    <option value="kia">Kia</option>
+                </select>
+                <select class="form-select w-auto me-2" name="model">
+                    <option selected>Модель</option>
+                    <option value="sonata">Sonata</option>
+                    <option value="elantra">Elantra</option>
+                </select>
+                <select class="form-select w-auto me-2" name="year">
+                    <option selected>Год</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                </select>
+                <select class="form-select w-auto me-2" name="part">
+                    <option selected>Запчасть</option>
+                    <option value="engine">Двигатель</option>
+                    <option value="suspension">Подвеска</option>
+                </select>
+                <button class="btn btn-primary" type="submit">Фильтр</button>
+            </form>
+        </div>
+
+        <!-- Карточки товаров -->
+        <div class="row">
+            {% for part in auto_parts %}
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <img src="{{ part.image.url }}" class="card-img-top" alt="{{ part.name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ part.name }}</h5>
+                        <p class="card-text">{{ part.description }}</p>
+                        <p class="text-danger">Цена: {{ part.price }} ₽</p>
+                        <form action="{% url 'add_to_cart' part.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">Добавить в корзину</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-3 bg-dark text-white mt-auto">
+        <p>&copy; 2025 KoreanAuto. Все права защищены.</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

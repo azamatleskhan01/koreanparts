@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ part.name }} — Детали запчасти</title>
+
+    <!-- Загрузка тегов для работы со статическими файлами -->
+    {% load static %}
+
+    <!-- Подключение CSS-файла -->
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1>{{ part.name }}</h1>
+        <nav>
+            <ul>
+                <li><a href="/static">Главная</a></li>
+                <li><a href="/catalog/">Каталог</a></li>
+                <li><a href="/cart/">Корзина</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="part-details">
+        <div class="part-info">
+            <!-- Проверка наличия изображения и его вывод -->
+            {% if part.image %}
+                <img src="{{ part.image.url }}" alt="{{ part.name }}" class="part-image">
+            {% else %}
+                <p>Изображение не доступно.</p>
+            {% endif %}
+
+            <div class="part-description">
+                <p><strong>Артикул:</strong> {{ part.part_number }}</p>
+                <p><strong>Цена:</strong> {{ part.price }} руб.</p>
+                <p><strong>Наличие:</strong> {% if part.stock > 0 %}В наличии{% else %}Нет в наличии{% endif %}</p>
+                <p><strong>Производитель:</strong> {{ part.manufacturer.brand }}</p>
+                <p><strong>Категория:</strong> {{ part.category.name }}</p>
+                <p><strong>Описание:</strong> {{ part.description|default:"Описание отсутствует" }}</p>
+            </div>
+        </div>
+
+        <section class="reviews">
+            <h3>Отзывы</h3>
+            {% if reviews %}
+                <ul>
+                    {% for review in reviews %}
+                        <li class="review">
+                            <p><strong>{{ review.user.username }} — {{ review.rating }}★</strong></p>
+                            <p>{{ review.comment|default:"Без комментариев" }}</p>
+                            {% if review.image %}
+                                <img src="{{ review.image.url }}" alt="Фото отзыва">
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Отзывов пока нет.</p>
+            {% endif %}
+
+            {% if user.is_authenticated %}
+                <h4>Оставьте отзыв:</h4>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <label for="rating">Оценка:</label>
+                    <select name="rating" id="rating" required>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                    <textarea name="comment" placeholder="Оставьте ваш комментарий" required></textarea>
+                    <label for="review_image">Фото (опционально):</label>
+                    <input type="file" name="image" id="review_image" accept="image/*">
+                    <button type="submit">Отправить отзыв</button>
+                </form>
+            {% else %}
+                <p>Чтобы оставить отзыв, <a href="{% url 'login' %}">войдите в аккаунт</a>.</p>
+            {% endif %}
+        </section>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Korean Motors</p>
+    </footer>
+</body>
+</html>
