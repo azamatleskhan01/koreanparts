@@ -19,3 +19,4 @@ Database: SQLite (default, can be switched to PostgreSQL)
 Frontend: HTML, CSS, JavaScript (for the interface and API interaction)
 Authentication: Django's built-in authentication system
 API: Django REST Framework (for API interactions with the client)
+<img width="1470" alt="advanced " src="https://github.com/user-attachments/assets/ebe28025-9dba-439a-b6c6-9e3168200ed3" />
